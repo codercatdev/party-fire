@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Welcome to Firebase Hosting</title>
+
+    <script>
+      partytown = {
+        debug: true,
+        logCalls: true,
+      };
+    </script>
+    <script type="text/javascript" src="/~partytown/partytown.js"></script>
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js";
+
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+      import {
+        getAnalytics,
+        logEvent,
+      } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-analytics.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-auth.js";
+
+      import {
+        getFirestore,
+        getDocs,
+        collection,
+      } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore.js";
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyA_GIhyP9giTDQ7rFvYB8h4rGAXjQn43is",
+        authDomain: "party-fire.firebaseapp.com",
+        databaseURL: "https://party-fire-default-rtdb.firebaseio.com",
+        projectId: "party-fire",
+        storageBucket: "party-fire.appspot.com",
+        messagingSenderId: "245437903066",
+        appId: "1:245437903066:web:f36c02d47ed3b4204db5e3",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+
+      const analytics = getAnalytics();
+
+      //Auth
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        logEvent(analytics, "auth_state_changed"); //analytics example
+
+        if (user) {
+          const uid = user.uid;
+          document.getElementById("user").innerHTML = uid;
+        } else {
+          document.getElementById("user").innerHTML = "User not logged in";
+        }
+      });
+
+      // Firestore
+      const firestore = getFirestore();
+      const querySnapshot = await getDocs(collection(firestore, "users"));
+      querySnapshot.forEach((doc) => {
+        document.getElementById("user-collection").innerHTML = JSON.stringify(
+          doc.data()
+        );
+      });
+
+      // Performance
+      import { getPerformance } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-performance.js";
+      const perf = getPerformance(app);
+    </script>
+  </head>
+  <body>
+    <div id="message">
+      <h2>Example of 🎉 Partytown and Firebase</h2>
+      <div style="display: flex">
+        <label for="user">User: </label>
+        <div id="user"></div>
+      </div>
+      <div style="display: flex">
+      <label for="collection">User Collection: </label>
+      <div id="user-collection"></div>
+    </div>
+  </body>
+</html>
